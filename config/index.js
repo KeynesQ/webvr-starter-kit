@@ -75,6 +75,7 @@ module.exports = (function () {
 			notypeof: true,
 			quotmark: 'single',
 			shadow: true,
+
 			//singleGroups: true,
 			undef: true,
 			//unused: true, todo: add this back in when more stuff is working
@@ -107,6 +108,7 @@ module.exports = (function () {
 
 	exports.production = extend(common, {
 		devtool: 'source-map',
+		// devtool: 'eval',
 		output: {
 			path: './build/',
 			filename: 'vr.js',

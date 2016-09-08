@@ -13,8 +13,18 @@
         Image rendered by dalai - http://code.blender.org/2015/03/1451/
         */
         VR.panorama({
-            src: 'assets/gooseberry_benchmark_panorama.jpg',
-            stereo: 'vertical'
+            src: '//gw.alicdn.com/tps/TB1usDhMVXXXXaVaXXXXXXXXXXX-3008-1504.jpg'
+            //src: 'assets/gooseberry_benchmark_panorama.jpg',
+            //stereo: 'vertical'
+        });
+        var box = VR.box().setMaterial('wood').moveTo(0, -2, -8);
+        box.text({
+            font: '40pt "微软雅黑"',
+            text: '阿里旅行',      
+            backgroundColor: 'red'
+        }).moveTo(0, 0, .5);
+        VR.animate(function (delta, time) {
+            box.rotateY(Math.PI * delta / 2);
         });
         </script>
     </body>

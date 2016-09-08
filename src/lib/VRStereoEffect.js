@@ -377,7 +377,8 @@ THREE.VRStereoEffect = function ( renderer, fullScreenElement, options ) {
 
 		//
 
-		renderer.enableScissorTest(true);
+		// renderer.enableScissorTest(true);
+
 
 		w = renderer.context.drawingBufferWidth / 2;
 

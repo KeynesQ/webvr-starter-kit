@@ -289,7 +289,7 @@
 
 		cameraWrapper = new VRObject(body, function (parent) {
 			//need a camera with which to look at stuff
-			camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, NEAR, FAR);
+			camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, NEAR, FAR);
 			parent.add(camera);
 
 			return camera;
