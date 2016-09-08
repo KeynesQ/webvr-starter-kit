@@ -1,3 +1,12 @@
+# Version Level Up
+## [20160908]
+- Change the compile file because it could not be compiled.
+- Change the default value of NEAR
+- Change the direction when mousemove happend.
+
+
+
+```
 # Web VR Starter Kit
 
 Web VR Starter Kit is a Javascript library for easily creating virtual reality content and making it available in web browsers on a range of devices. The library includes a simplified API for creating an manipulating 3D objects.
