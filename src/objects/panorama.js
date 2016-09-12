@@ -14,10 +14,12 @@ module.exports = (function () {
 		THREE = require('three'),
             // geometry = new THREE.BoxGeometry(60, 60, 60);
             // geometry = new THREE.SphereGeometry(100, 60, 60);
-        geometry = new THREE.SphereGeometry(5000, 60, 60,
+        geometry = new THREE.SphereGeometry(100, 60, 60,
             p.phiStart, p.phiLength, p.thetaStart, p.thetaLength);
         geometry.applyMatrix(new THREE.Matrix4().makeScale(-1, 1, 1));
         geometry.applyMatrix(new THREE.Matrix4().makeRotationY(- Math.PI / 2));
+    // Will not render panorama if already contains the key.
+    var mapRender = {};
 
 	return function panorama(parent, options) {
 		var material,
@@ -31,9 +33,25 @@ module.exports = (function () {
 		} else if (options) {
 			src = options.src;
 		}
+        if (mapRender[src]) {
+            // Remove all mesh object if scene contains them.
+            // Optimezei and Reduce Memory Usage for Panorama Model.
+            for (var key in mapRender) {
+                if(mapRender.hasOwnProperty(key)) {
+                    while (parent.getObjectByName(key)) {
+                        parent.remove(parent.getObjectByName(key));
+                    }
+                }
+            }
+            parent.add(mapRender[src]);
+            return mapRender[src];
+        }
 
 		if (src) {
 			tex = materials.imageTexture(src, THREE.UVMapping, function () {
+                parent.dispatchEvent({
+                    type: 'loaded'    
+                });
 				self.emit('loaded');
 			});
 		}
@@ -63,7 +81,9 @@ module.exports = (function () {
 			mesh.userData.stereo = options.stereo;
 		}
 
-		mesh.name = 'panorama';
+        mapRender[src] = mesh;
+
+		mesh.name = src;
 
 		parent.add(mesh);
 

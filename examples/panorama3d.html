@@ -6,16 +6,30 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     </head>
     <body>
-        <script type="text/javascript" src="../build/vr.dev.js" charset="utf-8"></script>
+        <script type="text/javascript" src="../build/vr.js" charset="utf-8"></script>
         <script type="text/javascript">
+        var canvas = document.createElement('canvas');
+        var gl = null;
+        var experimental = false;
+        try { gl = canvas.getContext("webgl"); }
+        catch (x) { gl = null; }
+
+        if (gl == null) {
+            try { gl = canvas.getContext("experimental-webgl"); experimental = true; }
+            catch (x) { gl = null; }
+        }
+        alert(gl);
         /*
         Scene from The Gooseberry Open Movie Project - https://gooseberry.blender.org/
         Image rendered by dalai - http://code.blender.org/2015/03/1451/
         */
-        VR.panorama({
-            src: '//gw.alicdn.com/tps/TB1usDhMVXXXXaVaXXXXXXXXXXX-3008-1504.jpg'
-            //src: 'assets/gooseberry_benchmark_panorama.jpg',
-            //stereo: 'vertical'
+        document.body.addEventListener('click', function () {
+            VR.scene.addEventListener('loaded', function () {alert(123)})
+            VR.panorama({
+                src: '//gw.alicdn.com/tps/TB1usDhMVXXXXaVaXXXXXXXXXXX-3008-1504.jpg'
+                //src: 'assets/gooseberry_benchmark_panorama.jpg',
+                //stereo: 'vertical'
+            });
         });
         var box = VR.box().setMaterial('wood').moveTo(0, -2, -8);
         box.text({
