@@ -11,6 +11,7 @@ THREE.VRStereoEffect = function ( renderer, fullScreenElement, options ) {
 
 	var hmdDevice;
 	var vrMode;
+    var inWebview = false;
 	var vrPreview = false;
 	var eyeOffsetLeft = new THREE.Vector3();
 	var eyeOffsetRight = new THREE.Vector3();
@@ -293,6 +294,9 @@ THREE.VRStereoEffect = function ( renderer, fullScreenElement, options ) {
 	this.isFullscreen = function () {
 		return vrMode;
 	};
+    this.isWebview = function () {
+        inWebview = true;
+    };
 
 	this.hmd = function () {
 		return hmdDevice;
@@ -343,7 +347,7 @@ THREE.VRStereoEffect = function ( renderer, fullScreenElement, options ) {
 
 		if (!hmdDevice) {
 			// left
-			//cameraLeft.fov = camera.fov;
+			cameraLeft.fov = camera.fov;
 			cameraLeft.aspect = 0.5 * camera.aspect;
 			cameraLeft.near = camera.near;
 			cameraLeft.far = camera.far;
@@ -351,7 +355,7 @@ THREE.VRStereoEffect = function ( renderer, fullScreenElement, options ) {
 
 			// right
 
-			// cameraRight.fov = camera.fov;
+			cameraRight.fov = camera.fov;
 			cameraRight.aspect = 0.5 * camera.aspect;
 			cameraRight.near = camera.near;
 			cameraRight.far = camera.far;
@@ -377,10 +381,7 @@ THREE.VRStereoEffect = function ( renderer, fullScreenElement, options ) {
 
 		//
 
-		// renderer.enableScissorTest(true);
-
-
-		w = renderer.context.drawingBufferWidth / 2;
+        w = renderer.context.drawingBufferWidth / 2;
 
 		if (renderTarget) {
 			renderer.setRenderTarget(renderTarget);
@@ -395,8 +396,15 @@ THREE.VRStereoEffect = function ( renderer, fullScreenElement, options ) {
 				}
 			}
 		});
-		renderer.setScissor( w, 0, w, h );
-		renderer.setViewport( w, 0, w, h );
+        // Modify by kuilin.qkl
+        // Not use Fullscreen
+        if (inWebview) {
+            renderer.setScissor( 0, h >> 1, w * 2, h >> 1 );
+            renderer.setViewport( 0, h >> 1, w * 2, h >> 1 );
+        } else {
+            renderer.setScissor( w, 0, w, h );
+            renderer.setViewport( w, 0, w, h );
+        }
 		renderer.render( rightScene, cameraRight, renderTarget, forceClear );
 
 		leftScene.traverseVisible(function (obj) {
@@ -404,14 +412,19 @@ THREE.VRStereoEffect = function ( renderer, fullScreenElement, options ) {
 				obj.material.map.offset.set(0, 0);
 			}
 		});
-		renderer.setScissor( 0, 0, w, h );
-		renderer.setViewport( 0, 0, w, h );
+        if (inWebview) {
+            renderer.setScissor( 0, 0, w * 2, h >> 1 );
+            renderer.setViewport( 0, 0, w * 2, h >> 1 );
+        } else {
+            renderer.setScissor( 0, 0, w, h );
+            renderer.setViewport( 0, 0, w, h );
+        }
 		renderer.render( leftScene, cameraLeft, renderTarget, forceClear );
 
 		//reset viewport, scissor
 		w *= 2;
-		renderer.setViewport( 0, 0, w, h );
-		renderer.setScissor( 0, 0, w, h );
+        renderer.setViewport( 0, 0, w, h );
+        renderer.setScissor( 0, 0, w, h );
 		renderer.enableScissorTest( false );
 	};
 

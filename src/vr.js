@@ -337,6 +337,7 @@
 
 			VR.emit('fullscreenchange', evt);
 		});
+        scene.isWebview = vrEffect.isWebview;
 
 		//report on HMD
 		vrControls.addEventListener('devicechange', function () {

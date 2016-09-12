@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     </head>
     <body>
-        <script type="text/javascript" src="../build/vr.js" charset="utf-8"></script>
+        <script type="text/javascript" src="../build/vr.dev.js" charset="utf-8"></script>
         <script type="text/javascript">
         var canvas = document.createElement('canvas');
         var gl = null;
@@ -25,11 +25,13 @@
         */
         document.body.addEventListener('click', function () {
             VR.scene.addEventListener('loaded', function () {alert(123)})
+            VR.scene.isWebview(true);
             VR.panorama({
                 src: '//gw.alicdn.com/tps/TB1usDhMVXXXXaVaXXXXXXXXXXX-3008-1504.jpg'
                 //src: 'assets/gooseberry_benchmark_panorama.jpg',
                 //stereo: 'vertical'
             });
+            VR.requestVR();
         });
         var box = VR.box().setMaterial('wood').moveTo(0, -2, -8);
         box.text({
