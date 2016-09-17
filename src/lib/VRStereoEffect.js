@@ -294,8 +294,12 @@ THREE.VRStereoEffect = function ( renderer, fullScreenElement, options ) {
 	this.isFullscreen = function () {
 		return vrMode;
 	};
-    this.isWebview = function () {
-        inWebview = true;
+
+    // Add by kuilin.qkl
+    this.isWebview = function (bool) {
+        if (typeof bool === 'undefined') return inWebview;
+        inWebview = bool;
+        return inWebview;
     };
 
 	this.hmd = function () {

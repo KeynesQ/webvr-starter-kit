@@ -152,6 +152,13 @@
 	}
 
 	function render() {
+       // if (CLOSE_RENDER) {
+       //     return;
+       // }
+
+        if ((Date.now() / 1000) - lastTick > 2) {
+            console.log(lastTick);
+        }
 		var now = Date.now() / 1000,
 			delta = Math.min(1, now - lastTick);
 
@@ -272,7 +279,10 @@
 		}
 
 		//create renderer and place in document
-		renderer = new THREE.WebGLRenderer({ antialias: true });
+        // Antialiasing temporarily disabled to improve performance.
+		renderer = new THREE.WebGLRenderer({ antialias: false });
+        renderer.setClearColor(0x000000, 0);
+        renderer.setSize(window.innerWidth, window.innerHeight);
 		renderer.domElement.addEventListener('webglcontextlost', function contextLost(event) {
 			console.log('lost context', event);
 		});
@@ -288,10 +298,23 @@
 		body = bodyWrapper.object;
 
 		cameraWrapper = new VRObject(body, function (parent) {
-			//need a camera with which to look at stuff
-			camera = new THREE.PerspectiveCamera(120, window.innerWidth / window.innerHeight, NEAR, FAR);
-			parent.add(camera);
+        //    camera = new THREE.OrthographicCamera(
+        //            window.innerWidth / - 24, window.innerWidth / 24,window.innerHeight / 24, window.innerHeight / - 24, -310, 100000);
+        //    camera.position.x = 0;
+        //    camera.position.y = 0;
+        //    camera.zoom = 0.4;
+		//	camera.position.set(-0.000001, 0.0001, 0.0001);
+		//	camera.rotation.set(0, 0, 0);
 
+			//need a camera with which to look at stuff
+            // The viewer proportion will be a square not a rect.
+			camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, NEAR, FAR);
+            camera.setFocalLength(10);
+            // camera.zoom = ;
+            camera.focus = 1;
+			// camera.position.set(-0.000001, 1, 0.0001);
+            camera.autoBackward = true;
+			parent.add(camera);
 			return camera;
 		})
 		// set camera position so that OrbitControls works properly.
@@ -358,6 +381,7 @@
 		mouseControls.update();
 
 		//todo: remove any default lights once other lights are added
+        // Will not use this way because memory
 		var dLight = new THREE.DirectionalLight(0xffffff, 0.8);
 		dLight.name = 'directional-light';
 		dLight.position.set(20, 100, 100);
@@ -491,10 +515,11 @@
 
 		exitVR: function () {
 			vrMode = false;
-			if (isFullscreen()) {
+			if (!vrEffect.isWebview() && isFullscreen()) {
 				exitFullscreen();
 				return;
 			}
+            vrEffect.exit();
 
 			mouseControls.enabled = true;
 			vrControls.freeze = !orientationEnabled;

@@ -4,8 +4,12 @@
         <meta charset="utf-8">
         <title>WebVR Starter Kit - 3D Panorama Example</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <script type="text/javascript" src="http://t.skip.daily.taobao.net/share/demo/1.4.2/example/first/gcanvas/bridge/windvane/bridge.js"></script>
+        <script type="text/javascript" src="http://t.skip.daily.taobao.net/share/demo/1.4.2/example/first/gcanvas/core/util/gutil.js"></script> 
+        <script type="text/javascript" src="http://t.skip.daily.taobao.net/share/demo/1.4.2/example/first/gcanvas/core/canvas/gcanvas.js"></script>
+        <script type="text/javascript" src="http://t.skip.daily.taobao.net/share/demo/1.4.2/example/first/gcanvas/gcanvas_adaptor.js"></script>
     </head>
-    <body>
+    <body onload="start()">
         <script type="text/javascript" src="../build/vr.dev.js" charset="utf-8"></script>
         <script type="text/javascript">
         var canvas = document.createElement('canvas');
@@ -18,30 +22,37 @@
             try { gl = canvas.getContext("experimental-webgl"); experimental = true; }
             catch (x) { gl = null; }
         }
-        alert(gl);
-        /*
-        Scene from The Gooseberry Open Movie Project - https://gooseberry.blender.org/
-        Image rendered by dalai - http://code.blender.org/2015/03/1451/
-        */
-        document.body.addEventListener('click', function () {
-            VR.scene.addEventListener('loaded', function () {alert(123)})
-            VR.scene.isWebview(true);
+        /// alert(gl);
+        function init() {
             VR.panorama({
+                preview: '//gw.alicdn.com/tps/TB1usDhMVXXXXaVaXXXXXXXXXXX-3008-1504.jpg_320x320.jpg',
+                // src: '//gw.alicdn.com/tps/TB1usDhMVXXXXaVaXXXXXXXXXXX-3008-1504.jpg_640x640.jpg'
                 src: '//gw.alicdn.com/tps/TB1usDhMVXXXXaVaXXXXXXXXXXX-3008-1504.jpg'
                 //src: 'assets/gooseberry_benchmark_panorama.jpg',
                 //stereo: 'vertical'
             });
-            VR.requestVR();
-        });
-        var box = VR.box().setMaterial('wood').moveTo(0, -2, -8);
-        box.text({
-            font: '40pt "微软雅黑"',
-            text: '阿里旅行',      
-            backgroundColor: 'red'
-        }).moveTo(0, 0, .5);
-        VR.animate(function (delta, time) {
-            box.rotateY(Math.PI * delta / 2);
-        });
+//            var box = VR.box().setMaterial('wood').moveTo(0, -2, -8);
+//            box.text({
+//                font: '40pt "微软雅黑"',
+//                text: '阿里旅行',      
+//                backgroundColor: 'red'
+//            }).moveTo(0, 0, .5);
+//            VR.animate(function (delta, time) {
+//                box.rotateY(Math.PI * delta / 2);
+//            });
+        }
+        function start() {
+          //  init();
+          GCanvas.start(init, init);
+        }
+        /*
+        Scene from The Gooseberry Open Movie Project - https://gooseberry.blender.org/
+        Image rendered by dalai - http://code.blender.org/2015/03/1451/
+        */
+        // document.body.addEventListener('click', function () {
+        //     VR.scene.addEventListener('loaded', function () {
+       //  });
+
         </script>
     </body>
 </html>

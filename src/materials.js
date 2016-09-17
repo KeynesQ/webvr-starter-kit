@@ -6,6 +6,7 @@ module.exports = (function () {
 		assign = require('lodash.assign'),
 
 		iOS = navigator.userAgent.match(/(iPad|iPhone|iPod)/g),
+		android = navigator.userAgent.toLowerCase().match(/android/g),
 
 		// https://gist.github.com/dperini/729294
 		//urlRegex = /^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/\S*)?$/i,
@@ -87,19 +88,33 @@ module.exports = (function () {
 			/*
 			iOS doesn't know how to handle large images. Even though the MAX_TEXTURE_SIZE
 			may be 4096, it still breaks on images that large. So we scale them down.
+            Change 2048 to 1024 fix memory is too high in iOS.
+            Modify by KeynesQ
 			*/
-			if (iOS && (image.naturalWidth > 2048 || image.naturalHeight > 2048)) {
-				scale = 2048 / Math.max( image.naturalWidth, image.naturalHeight );
+		//	if (iOS && (image.naturalWidth > 2048 || image.naturalHeight > 2048)) {
+		//		scale = 1024 / Math.max( image.naturalWidth, image.naturalHeight );
 
+		//		canvas = document.createElement('canvas');
+		//		canvas.width = 1024;
+		//		canvas.height = 512;
+
+		//		ctx = canvas.getContext('2d');
+		//		ctx.drawImage(image, 0, 0, image.naturalWidth, image.naturalHeight, 0, 0, canvas.width, canvas.height);
+
+		//		image = canvas;
+		//	}
+            // Reduce momery in mobile device.
+            if ((iOS || android) && (image.naturalWidth > 2048 || image.naturalHeight > 2048)) {
+                
 				canvas = document.createElement('canvas');
-				canvas.width = Math.floor(image.naturalWidth * scale);
-				canvas.height = Math.floor(image.naturalHeight * scale);
+				canvas.width = 1024;
+				canvas.height = 512;
 
 				ctx = canvas.getContext('2d');
 				ctx.drawImage(image, 0, 0, image.naturalWidth, image.naturalHeight, 0, 0, canvas.width, canvas.height);
 
 				image = canvas;
-			}
+            }
 
 			texture.image = image;
 			texture.needsUpdate = true;

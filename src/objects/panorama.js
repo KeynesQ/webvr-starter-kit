@@ -12,18 +12,21 @@ module.exports = (function () {
         p.thetaLength = p.thetaLength || Math.PI;
 	var materials = require('../materials'),
 		THREE = require('three'),
-            // geometry = new THREE.BoxGeometry(60, 60, 60);
+        // geometry = new THREE.BoxGeometry(15, 15, 15, 10, 10, 10);
             // geometry = new THREE.SphereGeometry(100, 60, 60);
-        geometry = new THREE.SphereGeometry(100, 60, 60,
-            p.phiStart, p.phiLength, p.thetaStart, p.thetaLength);
-        geometry.applyMatrix(new THREE.Matrix4().makeScale(-1, 1, 1));
-        geometry.applyMatrix(new THREE.Matrix4().makeRotationY(- Math.PI / 2));
+        // geometry = new THREE.SphereGeometry(60, 100, 100,
+        geometry = new THREE.SphereGeometry(16, 32, 32, p.phiStart, p.phiLength, p.thetaStart, p.thetaLength);
+        geometry.applyMatrix(new THREE.Matrix4().makeScale(-2, 2, 2.3));
+        geometry.applyMatrix(new THREE.Matrix4().makeRotationY(- Math.PI / 3));
     // Will not render panorama if already contains the key.
     var mapRender = {};
+    var isListener = false;
 
 	return function panorama(parent, options) {
 		var material,
 			mesh,
+            preview,
+            pretex,
 			src,
 			tex,
 			self = this;
@@ -32,6 +35,7 @@ module.exports = (function () {
 			src = options;
 		} else if (options) {
 			src = options.src;
+            preview = options.preview;
 		}
         if (mapRender[src]) {
             // Remove all mesh object if scene contains them.
@@ -47,27 +51,52 @@ module.exports = (function () {
             return mapRender[src];
         }
 
+		if (preview) {
+			pretex = materials.imageTexture(preview, THREE.UVMapping, function () {
+			});
+		}
+
 		if (src) {
+            if (!isListener) {
+                parent.addEventListener('loaded', function (event) {
+                    var data = event.data;
+                    while (parent.getObjectByName('preview')) {
+                        parent.remove(parent.getObjectByName('preview'));
+                    }
+
+                    material = new THREE.MeshBasicMaterial({
+                        map: data.tex
+                    });
+                    mesh = new THREE.Mesh(geometry, material);
+                    mapRender[data.src] = mesh;
+
+                    mesh.name = src;
+
+                    parent.add(mesh);
+                });
+                isListener = true;
+            }
 			tex = materials.imageTexture(src, THREE.UVMapping, function () {
                 parent.dispatchEvent({
-                    type: 'loaded'    
+                    type: 'loaded',
+                    data: {
+                        src: src,
+                        tex: tex
+                    }
                 });
 				self.emit('loaded');
 			});
 		}
 
-        var uvs = geometry.faceVertexUvs[0];
-        for (var i = 0; i < uvs.length; i ++) {
-          for (var j = 0; j < 3; j ++) {
-            uvs[i][j].x *= p.scaleX;
-            uvs[i][j].x += p.offsetX;
-            uvs[i][j].y *= p.scaleY;
-            uvs[i][j].y += p.offsetY;
-          }
-        }
 		material = new THREE.MeshBasicMaterial({
-			transparent: true,
-			map: tex
+			// transparent: true,
+			// envMap: tex,
+			map: pretex
+            // side: THREE.DoubleSide,
+            // debug
+            // wireframe: true,
+            // depthWrite: false
+            // envMap:cubemap
 		});
 
 		mesh = new THREE.Mesh(geometry, material);
@@ -81,11 +110,9 @@ module.exports = (function () {
 			mesh.userData.stereo = options.stereo;
 		}
 
-        mapRender[src] = mesh;
+        mesh.name = 'preview';
 
-		mesh.name = src;
-
-		parent.add(mesh);
+        parent.add(mesh);
 
 		this.raycastable = false;
 
