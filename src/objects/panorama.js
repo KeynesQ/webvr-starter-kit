@@ -48,6 +48,9 @@ module.exports = (function () {
                 }
             }
             parent.add(mapRender[src]);
+            parent.dispatchEvent({
+                type: 'img-loaded'
+            });
             return mapRender[src];
         }
 
@@ -73,6 +76,9 @@ module.exports = (function () {
                     mesh.name = src;
 
                     parent.add(mesh);
+                    parent.dispatchEvent({
+                        type: 'img-loaded'
+                    });
                 });
                 isListener = true;
             }

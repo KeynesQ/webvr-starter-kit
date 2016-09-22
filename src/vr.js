@@ -67,6 +67,7 @@
 		raycastable = [],
 
 		lastTick = 0,
+        waitRenderInative = 0,
 		animationCallbacks = [];
 
 	function isFullscreen() {
@@ -155,10 +156,19 @@
        // if (CLOSE_RENDER) {
        //     return;
        // }
-
-        if ((Date.now() / 1000) - lastTick > 2) {
-            console.log(lastTick);
+        // Will not start render when application has been active.
+        // The case only in taobao client. Very suck!
+        if (Date.now() / 1000 - lastTick > 5) {
+            if (waitRenderInative === 0) {
+                waitRenderInative = Date.now() / 1000;
+            }
+            if (Date.now() / 1000 - waitRenderInative > 3) {
+                lastTick = Date.now();
+            }
+            return;
         }
+        waitRenderInative = 0;
+
 		var now = Date.now() / 1000,
 			delta = Math.min(1, now - lastTick);
 
@@ -454,6 +464,7 @@
 		initShake();
 
 		resize();
+
 
 		document.addEventListener('visibilitychange', visibilityChange);
 		document.addEventListener('mozvisibilitychange', visibilityChange);
