@@ -2,7 +2,7 @@
 	'use strict';
 
 	//constants
-	var NEAR = 0.1,
+	var NEAR = 1,
 		FAR = 1000000,
 
 	//global-ish declarations
@@ -162,7 +162,7 @@
             if (waitRenderInative === 0) {
                 waitRenderInative = Date.now() / 1000;
             }
-            if (Date.now() / 1000 - waitRenderInative > 3) {
+            if (Date.now() / 1000 - waitRenderInative > 1) {
                 lastTick = Date.now();
             }
             return;
@@ -318,12 +318,12 @@
 
 			//need a camera with which to look at stuff
             // The viewer proportion will be a square not a rect.
-			camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, NEAR, FAR);
-            camera.setFocalLength(10);
-            // camera.zoom = ;
-            camera.focus = 1;
+			camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, NEAR, FAR);
+            camera.setFocalLength(8);
+            camera.zoom = 0.8;
+            // camera.focus = 1;
 			// camera.position.set(-0.000001, 1, 0.0001);
-            camera.autoBackward = true;
+            // camera.autoBackward = true;
 			parent.add(camera);
 			return camera;
 		})

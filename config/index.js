@@ -54,7 +54,7 @@ module.exports = (function () {
 				console: true
 			},
 
-			bitwise: true,
+			// bitwise: true,
 			browser: true,
 			camelcase: true,
 			curly: true,

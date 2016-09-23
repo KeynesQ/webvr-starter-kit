@@ -103,58 +103,81 @@ module.exports = (function () {
 
 		//		image = canvas;
 		//	}
-            // Reduce momery in mobile device.
-            if ((iOS || android) && (image.naturalWidth > 2048 || image.naturalHeight > 2048)) {
-                
-				canvas = document.createElement('canvas');
-				canvas.width = 1024;
-				canvas.height = 512;
+                // Reduce momery in mobile device.
+                if ((iOS || android) && (image.naturalWidth > 2048 || image.naturalHeight > 2048)) {
+                // scales the image by (float) scale < 1
 
-				ctx = canvas.getContext('2d');
-				ctx.drawImage(image, 0, 0, image.naturalWidth, image.naturalHeight, 0, 0, canvas.width, canvas.height);
+                    scale = 1024 / Math.max( image.naturalWidth, image.naturalHeight );
+                    canvas = document.createElement('canvas');
+                    canvas.width = Math.floor(image.naturalWidth * scale);
+                    canvas.height = Math.floor(image.naturalHeight * scale);
 
-				image = canvas;
+                    ctx = canvas.getContext('2d');
+
+                    ctx.drawImage(image, 0, 0, image.naturalWidth, image.naturalHeight, 0, 0, canvas.width, canvas.height);
+                   // if (iOS) {
+                   //     var dstData = ctx.createImageData(canvas.width, canvas.height),
+                   //         dstBuff = dstData.data,
+                   //         srcBuff = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+                   //     var _worker = new Worker('//h5.m.taobao.com/js/trip/hotel/worker.js');
+                   //     _worker.onmessage = function (e) {
+                   //         var data = e.data[0];
+                   //         // Get new image data
+                   //         ctx.putImageData(data, 0, 0);
+                   //         texture.image = canvas;
+                   //         texture.needsUpdate = true;
+                   //         if (typeof callback === 'function') {
+                   //             setTimeout(callback.bind(null, texture, image), 1);
+                   //         }
+                   //         _worker.terminate();
+                   //     };
+                   //     _worker.postMessage([dstData, srcBuff, canvas.width, canvas.height]);
+                   //     return;
+                   // }
+
+                    image = canvas;
+                }
+
+                texture.image = image;
+                texture.needsUpdate = true;
+                if (typeof callback === 'function') {
+                    setTimeout(callback.bind(null, texture, image), 1);
+                }
             }
 
-			texture.image = image;
-			texture.needsUpdate = true;
-			if (typeof callback === 'function') {
-				setTimeout(callback.bind(null, texture, image), 1);
-			}
-		}
+            parse = dataUri.exec(src);
+            isDataUri = !!parse;
+            if (!parse) {
+                parse = urlRegex.exec(src);
+            }
 
-		parse = dataUri.exec(src);
-		isDataUri = !!parse;
-		if (!parse) {
-			parse = urlRegex.exec(src);
-		}
+            // if (!parse) {
+            // 	console.error('Invalid image URL: ' + src);
+            // 	return;
+            // }
 
-		// if (!parse) {
-		// 	console.error('Invalid image URL: ' + src);
-		// 	return;
-		// }
+            if (images[src]) {
+                image = images[src];
+            } else {
+                image = document.createElement('img');
+                if (parse && (parse[1] && parse[1] !== window.location.hostname || parse[2] && parse[2] !== window.location.port)) {
+                    image.crossOrigin = 'anonymous';
+                }
+                image.src = src;
+                images[src] = image;
+            }
 
-		if (images[src]) {
-			image = images[src];
-		} else {
-			image = document.createElement('img');
-			if (parse && (parse[1] && parse[1] !== window.location.hostname || parse[2] && parse[2] !== window.location.port)) {
-				image.crossOrigin = 'anonymous';
-			}
-			image.src = src;
-			images[src] = image;
-		}
+            texture = new THREE.Texture(undefined, mapping);
 
-		texture = new THREE.Texture(undefined, mapping);
+            if (image.naturalWidth || isDataUri) {
+                setTimeout(imageLoaded, 1);
+            } else {
+                image.addEventListener('load', imageLoaded);
+            }
 
-		if (image.naturalWidth || isDataUri) {
-			setTimeout(imageLoaded, 1);
-		} else {
-			image.addEventListener('load', imageLoaded);
-		}
+            return texture;
+        }
 
-		return texture;
-	}
 
 	function material(options) {
 		var opts,
