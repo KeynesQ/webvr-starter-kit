@@ -42,5 +42,8 @@
     "webpack": "^1.5.1",
     "webpack-dev-server": "^1.7.0",
     "xtend": "^4.0.0"
+  },
+  "dependencies": {
+    "three": "^0.81.2"
   }
 }

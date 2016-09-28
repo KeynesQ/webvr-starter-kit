@@ -107,33 +107,33 @@ module.exports = (function () {
                 if ((iOS || android) && (image.naturalWidth > 2048 || image.naturalHeight > 2048)) {
                 // scales the image by (float) scale < 1
 
-                    scale = 1024 / Math.max( image.naturalWidth, image.naturalHeight );
+                    scale = 2048 / Math.max( image.naturalWidth, image.naturalHeight );
                     canvas = document.createElement('canvas');
                     canvas.width = Math.floor(image.naturalWidth * scale);
                     canvas.height = Math.floor(image.naturalHeight * scale);
 
                     ctx = canvas.getContext('2d');
 
-                    ctx.drawImage(image, 0, 0, image.naturalWidth, image.naturalHeight, 0, 0, canvas.width, canvas.height);
-                    if (iOS) {
-                        var dstData = ctx.createImageData(canvas.width, canvas.height),
-                            dstBuff = dstData.data,
-                            srcBuff = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-                        var _worker = new Worker('worker.js');
-                        _worker.onmessage = function (e) {
-                            var data = e.data[0];
-                            // Get new image data
-                            ctx.putImageData(data, 0, 0);
-                            texture.image = canvas;
-                            texture.needsUpdate = true;
-                            if (typeof callback === 'function') {
-                                setTimeout(callback.bind(null, texture, image), 1);
-                            }
-                            // _worker.terminate();
-                        };
-                        _worker.postMessage([dstData, srcBuff, canvas.width, canvas.height]);
-                        return;
-                    }
+                    ctx.drawImage(image, 0, 0, image.naturalWidth, image.naturalHeight, -0.5, -0.5, canvas.width + 0.5, canvas.height + 0.5);
+                   // if (iOS) {
+                   //     var dstData = ctx.createImageData(canvas.width, canvas.height),
+                   //         dstBuff = dstData.data,
+                   //         srcBuff = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+                   //     var _worker = new Worker('worker.js');
+                   //     _worker.onmessage = function (e) {
+                   //         var data = e.data[0];
+                   //         // Get new image data
+                   //         ctx.putImageData(data, 0, 0);
+                   //         texture.image = canvas;
+                   //         texture.needsUpdate = true;
+                   //         if (typeof callback === 'function') {
+                   //             setTimeout(callback.bind(null, texture, image), 1);
+                   //         }
+                   //         // _worker.terminate();
+                   //     };
+                   //     _worker.postMessage([dstData, srcBuff, canvas.width, canvas.height]);
+                   //     return;
+                   // }
 
                     image = canvas;
                 }

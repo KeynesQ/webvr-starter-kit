@@ -111,7 +111,7 @@ module.exports = (function () {
 		// devtool: 'eval',
 		output: {
 			path: './build/',
-			filename: 'vr.js',
+			filename: 'VR.js',
 			sourceMapFilename: '[file].map'
 		},
 		plugins: [

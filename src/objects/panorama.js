@@ -13,11 +13,35 @@ module.exports = (function () {
 	var materials = require('../materials'),
 		THREE = require('three'),
         // geometry = new THREE.BoxGeometry(15, 15, 15, 10, 10, 10);
-            // geometry = new THREE.SphereGeometry(100, 60, 60);
+         // geometry = new THREE.SphereGeometry(1, 60, 60);
         // geometry = new THREE.SphereGeometry(60, 100, 100,
         geometry = new THREE.SphereGeometry(16, 32, 32, p.phiStart, p.phiLength, p.thetaStart, p.thetaLength);
-        geometry.applyMatrix(new THREE.Matrix4().makeScale(-2, 2, 2.3));
+        geometry.applyMatrix(new THREE.Matrix4().makeScale(-1, 1, 1));
         geometry.applyMatrix(new THREE.Matrix4().makeRotationY(- Math.PI / 3));
+   // var normals = geometry.attributes.normal.array;
+   // var uvs = geometry.attributes.uv.array;
+
+   // for ( var i = 0, l = normals.length / 3; i < l; i ++ ) {
+
+   //     var x = normals[ i * 3 + 0 ];
+   //     var y = normals[ i * 3 + 1 ];
+   //     var z = normals[ i * 3 + 2 ];
+
+   //     if ( i < l / 2 ) {
+
+   //         var correction = ( x === 0 && z === 0 ) ? 1 : ( Math.acos( y ) / Math.sqrt( x * x + z * z ) ) * ( 2 / Math.PI );
+   //         uvs[ i * 2 + 0 ] = x * ( 404 / 1920 ) * correction + ( 447 / 1920 );
+   //         uvs[ i * 2 + 1 ] = z * ( 404 / 1080 ) * correction + ( 582 / 1080 );
+
+   //     } else {
+
+   //         var correction = ( x === 0 && z === 0 ) ? 1 : ( Math.acos( - y ) / Math.sqrt( x * x + z * z ) ) * ( 2 / Math.PI );
+   //         uvs[ i * 2 + 0 ] = - x * ( 404 / 1920 ) * correction + ( 1460 / 1920 );
+   //         uvs[ i * 2 + 1 ] = z * ( 404 / 1080 ) * correction + ( 582 / 1080 );
+
+   //     }
+
+   // }
     // Will not render panorama if already contains the key.
     var mapRender = {};
     var isListener = false;

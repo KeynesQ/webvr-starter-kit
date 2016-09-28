@@ -27,7 +27,7 @@
             VR.panorama({
                 preview: '//gw.alicdn.com/bao/uploaded/i5/TB1F_7_NXXXXXasXXXX_T9n9XXX_034720.jpg_320x320.jpg',
                 // src: '//gw.alicdn.com/tps/TB1usDhMVXXXXaVaXXXXXXXXXXX-3008-1504.jpg_640x640.jpg'
-                src: '//gw.alicdn.com/bao/uploaded/i5/TB1F_7_NXXXXXasXXXX_T9n9XXX_034720.jpg'
+                src: '//gw.alicdn.com/bao/uploaded/i6/TB1G7C5NpXXXXbcaXXXdAal8VXX_031751.jpg'
                 //src: 'assets/gooseberry_benchmark_panorama.jpg',
                 //stereo: 'vertical'
             });
@@ -40,10 +40,10 @@
 //            VR.animate(function (delta, time) {
 //                box.rotateY(Math.PI * delta / 2);
 //            });
+            document.body.addEventListener('click', function () {VR.requestVR()});
         }
-        init();
         function start() {
-          //it();
+          init();
           // GCanvas.start(init, init);
         }
         /*

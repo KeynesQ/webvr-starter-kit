@@ -2,7 +2,7 @@
 	'use strict';
 
 	//constants
-	var NEAR = 1,
+	var NEAR = 0.1,
 		FAR = 1000000,
 
 	//global-ish declarations
@@ -186,6 +186,7 @@
 
 		raycast();
 
+        // camera.lookAt( scene.position );
 		vrEffect.render(scene, camera);
 
 		lastTick = now;
@@ -215,8 +216,10 @@
 	function visibilityChange() {
 		if (document.hidden || document.mozHidden || document.msHidden || document.webkitHidden) {
 			audioListener.volume(0);
+            stop();
 		} else {
 			audioListener.volume(1);
+            start();
 		}
 	}
 
@@ -292,7 +295,10 @@
         // Antialiasing temporarily disabled to improve performance.
 		renderer = new THREE.WebGLRenderer({ antialias: false });
         renderer.setClearColor(0x000000, 0);
+        renderer.setPixelRatio( window.devicePixelRatio );
+        // renderer.setScale( window.devicePixelRatio );
         renderer.setSize(window.innerWidth, window.innerHeight);
+        // console.log(window.devicePixelRatio);
 		renderer.domElement.addEventListener('webglcontextlost', function contextLost(event) {
 			console.log('lost context', event);
 		});
@@ -320,10 +326,13 @@
             // The viewer proportion will be a square not a rect.
 			camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, NEAR, FAR);
             // camera.setFocalLength(8);
-            // camera.zoom = 1;
+            // camera.zoom = 0.8;
             // camera.focus = 1;
-			// camera.position.set(-0.000001, 1, 0.0001);
-            // camera.autoBackward = true;
+			camera.position.set(-0.000001, 1, 0.0001);
+            camera.fov = camera.fov * 1.5;
+            // camera.position.set( 0, 0, 0 );
+            camera.autoBackward = true;
+            camera.updateProjectionMatrix();
 			parent.add(camera);
 			return camera;
 		})
@@ -388,6 +397,8 @@
 		mouseControls = new THREE.OrbitControls(camera, renderer.domElement);
 		mouseControls.target0.set(0, 0.0001, 0.000);
 		mouseControls.target.copy(mouseControls.target0);
+        mouseControls.enableZoom = false;
+        mouseControls.enablePan = false;
 		mouseControls.update();
 
 		//todo: remove any default lights once other lights are added
