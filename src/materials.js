@@ -115,25 +115,25 @@ module.exports = (function () {
                     ctx = canvas.getContext('2d');
 
                     ctx.drawImage(image, 0, 0, image.naturalWidth, image.naturalHeight, 0, 0, canvas.width, canvas.height);
-                   // if (iOS) {
-                   //     var dstData = ctx.createImageData(canvas.width, canvas.height),
-                   //         dstBuff = dstData.data,
-                   //         srcBuff = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-                   //     var _worker = new Worker('//h5.m.taobao.com/js/trip/hotel/worker.js');
-                   //     _worker.onmessage = function (e) {
-                   //         var data = e.data[0];
-                   //         // Get new image data
-                   //         ctx.putImageData(data, 0, 0);
-                   //         texture.image = canvas;
-                   //         texture.needsUpdate = true;
-                   //         if (typeof callback === 'function') {
-                   //             setTimeout(callback.bind(null, texture, image), 1);
-                   //         }
-                   //         _worker.terminate();
-                   //     };
-                   //     _worker.postMessage([dstData, srcBuff, canvas.width, canvas.height]);
-                   //     return;
-                   // }
+                    if (iOS) {
+                        var dstData = ctx.createImageData(canvas.width, canvas.height),
+                            dstBuff = dstData.data,
+                            srcBuff = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+                        var _worker = new Worker('worker.js');
+                        _worker.onmessage = function (e) {
+                            var data = e.data[0];
+                            // Get new image data
+                            ctx.putImageData(data, 0, 0);
+                            texture.image = canvas;
+                            texture.needsUpdate = true;
+                            if (typeof callback === 'function') {
+                                setTimeout(callback.bind(null, texture, image), 1);
+                            }
+                            // _worker.terminate();
+                        };
+                        _worker.postMessage([dstData, srcBuff, canvas.width, canvas.height]);
+                        return;
+                    }
 
                     image = canvas;
                 }

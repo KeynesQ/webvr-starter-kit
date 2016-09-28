@@ -318,9 +318,9 @@
 
 			//need a camera with which to look at stuff
             // The viewer proportion will be a square not a rect.
-			camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, NEAR, FAR);
-            camera.setFocalLength(8);
-            camera.zoom = 0.8;
+			camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, NEAR, FAR);
+            // camera.setFocalLength(8);
+            // camera.zoom = 1;
             // camera.focus = 1;
 			// camera.position.set(-0.000001, 1, 0.0001);
             // camera.autoBackward = true;
