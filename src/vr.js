@@ -88,8 +88,8 @@
                 gl = null;
             }
         }
-        return false;
-        // return Boolean(gl);
+        // return false;
+        return Boolean(gl);
     })();
 
     window.isSupportWebgl = isSupportWebgl;
@@ -207,6 +207,7 @@
 		vrObjects.forEach(function (object) {
 			object.update(now);
 		});
+        mouseControls.update();
 
 		raycast();
 
@@ -348,12 +349,8 @@
 			//need a camera with which to look at stuff
             // The viewer proportion will be a square not a rect.
 			camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, NEAR, FAR);
-            camera.fov = camera.fov * 1.2;
-            camera.autoBackward = true;
-            camera.updateProjectionMatrix();
-            // camera.setFocalLength(8);
-            // camera.zoom = 0.8;
-            // camera.focus = 1;
+            camera.setFocalLength(8);
+            camera.zoom = 0.8;
 			// camera.position.set(-0.000001, 1, 0.0001);
             // camera.autoBackward = true;
 			parent.add(camera);
@@ -416,12 +413,29 @@
 			VR.emit('devicechange', vrControls.mode(), vrEffect.hmd());
 		});
 
-		//mouse control in case got no orientation device
+		// mouse control in case got no orientation device
+        // Re-start autorotate if user has not been controlled.
+        var autoRotateTimer = null;
 		mouseControls = new THREE.OrbitControls(camera, renderer.domElement);
 		mouseControls.target0.set(0, 0.0001, 0.000);
 		mouseControls.target.copy(mouseControls.target0);
         mouseControls.enableZoom = true;
         mouseControls.enablePan = false;
+        mouseControls.autoRotate = true;
+        mouseControls.autoRotateSpeed = 1.0;
+        mouseControls.enableDamping = true;
+        mouseControls.dampingFactor = 0.55;
+        mouseControls.addEventListener('start', function(){
+            if (autoRotateTimer) {
+                clearTimeout(autoRotateTimer);
+            }
+            mouseControls.autoRotate = false;
+        });
+        mouseControls.addEventListener('end', function(){
+            autoRotateTimer = setTimeout(function(){
+                mouseControls.autoRotate = true;
+            }, 2000);
+        });
 		mouseControls.update();
 
 		//todo: remove any default lights once other lights are added
@@ -585,12 +599,14 @@
 		},
 		enableOrientation: function () {
 			orientationEnabled = true;
+            mouseControls.autoRotate = false;
 			if (!vrMode) {
 				vrControls.freeze = false;
 			}
 		},
 		disableOrientation: function () {
 			orientationEnabled = false;
+            mouseControls.autoRotate = true;
 			camera.rotation.set(0, 0, 0);
 			vrControls.freeze = !vrMode;
 		},

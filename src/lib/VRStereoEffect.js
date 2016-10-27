@@ -326,8 +326,8 @@ THREE.VRStereoEffect = function ( renderer, fullScreenElement, options ) {
 			camera.updateMatrixWorld();
 		}
 
-		// w = width || renderer.domElement.width;
-		// h = height || renderer.domElement.height;
+		w = width || renderer.domElement.width;
+		h = height || renderer.domElement.height;
         // This code would not be annotated if mobile model.
 		w /= window.devicePixelRatio || 1;
 		h /= window.devicePixelRatio || 1;
@@ -353,7 +353,7 @@ THREE.VRStereoEffect = function ( renderer, fullScreenElement, options ) {
 
 		if (!hmdDevice) {
 			// left
-			cameraLeft.fov = camera.fov * 1.2;
+			cameraLeft.fov = camera.fov;
 			cameraLeft.aspect = 0.5 * camera.aspect;
 			cameraLeft.near = camera.near;
 			cameraLeft.far = camera.far;
@@ -361,7 +361,7 @@ THREE.VRStereoEffect = function ( renderer, fullScreenElement, options ) {
 
 			// right
 
-			cameraRight.fov = camera.fov * 1.2;
+			cameraRight.fov = camera.fov;
 			cameraRight.aspect = 0.5 * camera.aspect;
 			cameraRight.near = camera.near;
 			cameraRight.far = camera.far;
