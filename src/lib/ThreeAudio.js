@@ -238,8 +238,11 @@ THREE.AudioListener.prototype.updateMatrixWorld = ( function () {
 
 			orientation.set( 0, 0, -1 ).applyQuaternion( quaternion );
 
-			listener.setPosition( position.x, position.y, position.z );
-			listener.setOrientation( orientation.x, orientation.y, orientation.z, this.up.x, this.up.y, this.up.z );
+            // Error Fixed
+            try {
+			    listener.setPosition( position.x, position.y, position.z );
+			    listener.setOrientation( orientation.x, orientation.y, orientation.z, this.up.x, this.up.y, this.up.z );
+            } catch (e) {}
 
 		}
 	};

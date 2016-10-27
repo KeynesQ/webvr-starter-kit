@@ -317,11 +317,11 @@
 
 		//create renderer and place in document
         // Antialiasing temporarily disabled to improve performance.
-		renderer = !isSupportWebgl?new THREE.CSS3DRenderer():new THREE.WebGLRenderer({ antialias: false });
+		renderer = !isSupportWebgl?new THREE.CanvasRenderer():new THREE.WebGLRenderer({ antialias: false });
         renderer.setClearColor(0x000000, 0);
+        renderer.setPixelRatio( window.devicePixelRatio );
         renderer.setSize(window.innerWidth, window.innerHeight);
 		if (isSupportWebgl) {
-            renderer.setPixelRatio( window.devicePixelRatio );
             renderer.domElement.addEventListener('webglcontextlost', function contextLost(event) {
                 console.log('lost context', event);
             });
@@ -348,9 +348,9 @@
 
 			//need a camera with which to look at stuff
             // The viewer proportion will be a square not a rect.
-			camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, NEAR, FAR);
+			camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, NEAR, FAR);
             camera.setFocalLength(8);
-            camera.zoom = 0.8;
+            // camera.zoom = 0.8;
 			// camera.position.set(-0.000001, 1, 0.0001);
             // camera.autoBackward = true;
 			parent.add(camera);
@@ -499,7 +499,8 @@
 		eventEmitter = require('event-emitter');
 
         //if (!isSupportWebgl) {
-            require('imports?THREE=three!./lib/CSS3DRenderer.js');
+            require('imports?THREE=three!./lib/CanvasRenderer.js');
+            require('imports?THREE=three!./lib/Projector.js');
           //  return;
         //}
 

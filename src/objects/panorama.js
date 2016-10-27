@@ -24,14 +24,39 @@ module.exports = (function () {
     var mapRender = {};
     var isListener = false;
     // Will use css3drenderer if not support webgl.
-    var cube = new THREE.Object3D();
-    var STR_CHILDEN_NAME = 'obj3DElement';
+    
+    var texturePlaceholder = document.createElement( 'canvas' );
+    texturePlaceholder.width = 128;
+    texturePlaceholder.height = 128;
+    var context = texturePlaceholder.getContext( '2d' );
+    context.fillStyle = 'rgb( 200, 200, 200 )';
+    context.fillRect( 0, 0, texturePlaceholder.width, texturePlaceholder.height );
+
+    function loadTexture( path, _parent ) {
+        var texture = new THREE.Texture( texturePlaceholder );
+        var material = new THREE.MeshBasicMaterial( { map: texture, overdraw: 0.5 } );
+        var image = new Image();
+        image.onload = function () {
+            texture.image = this;
+            texture.needsUpdate = true;
+            _parent.dispatchEvent({
+                type: 'img-loaded'
+            });
+        };
+        image.src = path;
+        return material;
+    }
 
 	return function panorama(parent, options) {
         var src,
             preview,
             cubeSrc = {};
 		var self = this;
+		var material,
+			mesh,
+            pretex,
+            mapKey,
+			tex;
 
 		if (typeof options === 'string') {
 			src = options;
@@ -47,74 +72,11 @@ module.exports = (function () {
                 cubeSrc.back = options.back;
             }
 		}
-        // CSS rendering.
+        mapKey = src;
         if (!isSupportWebgl) {
-            var sides = [
-                {
-                    url: cubeSrc.right,
-                    position: [ -512, 0, 0 ],
-                    rotation: [ 0, Math.PI / 2, 0 ]
-                },
-                {
-                    url: cubeSrc.left,
-                    position: [ 512, 0, 0 ],
-                    rotation: [ 0, -Math.PI / 2, 0 ]
-                },
-                {
-                    url: cubeSrc.top,
-                    position: [ 0,  512, 0 ],
-                    rotation: [ Math.PI / 2, 0, Math.PI ]
-                },
-                {
-                    url: cubeSrc.down,
-                    position: [ 0, -512, 0 ],
-                    rotation: [ - Math.PI / 2, 0, Math.PI ]
-                },
-                {
-                    url: cubeSrc.front,
-                    position: [ 0, 0,  512 ],
-                    rotation: [ 0, Math.PI, 0 ]
-                },
-                {
-                    url: cubeSrc.back,
-                    position: [ 0, 0, -512 ],
-                    rotation: [ 0, 0, 0 ]
-                }
-            ];
-            // Remove children from cube;
-            for ( var i = 0; i < sides.length; i ++ ) {
-                if (cube.getObjectByName(STR_CHILDEN_NAME + i)) {
-                    cube.remove(cube.getObjectByName(STR_CHILDEN_NAME + i));
-                }
-            }
-            parent.remove(cube);
-            parent.add(cube);
-            var callbackOnload = function () {
-                // Notify outside to do something when image has been loaded.
-                parent.dispatchEvent({
-                    type: 'img-loaded'
-                });
-            };
-            for ( var i = 0; i < sides.length; i ++ ) {
-                var side = sides[ i ];
-                var element = document.createElement( 'img' );
-                element.width = 1026; // 2 pixels extra to close the gap.
-                element.src = side.url;
-                element.onload = callbackOnload;
-                var object = new THREE.CSS3DObject( element );
-                object.name = STR_CHILDEN_NAME + i;
-                object.position.fromArray( side.position );
-                object.rotation.fromArray( side.rotation );
-                cube.add( object );
-            }
-            return cube;
+            mapKey = cubeSrc.left;
         }
-
-		var material,
-			mesh,
-            pretex,
-			tex;
-        if (mapRender[src]) {
+        if (mapRender[mapKey]) {
             // Remove all mesh object if scene contains them.
             // Optimezei and Reduce Memory Usage for Panorama Model.
             for (var key in mapRender) {
@@ -124,11 +86,35 @@ module.exports = (function () {
                     }
                 }
             }
-            parent.add(mapRender[src]);
+            parent.add(mapRender[mapKey]);
             parent.dispatchEvent({
                 type: 'img-loaded'
             });
-            return mapRender[src];
+            return mapRender[mapKey];
+        }
+        if (!isSupportWebgl) {
+            var arrMaterial = [
+                loadTexture( cubeSrc.right, parent ), // right
+                loadTexture( cubeSrc.left, parent ), // left
+                loadTexture( cubeSrc.top, parent ), // top
+                loadTexture( cubeSrc.down, parent ), // bottom
+                loadTexture( cubeSrc.front, parent ), // front
+                loadTexture( cubeSrc.back, parent ) // back
+            ];
+
+            mesh = new THREE.Mesh( new THREE.BoxGeometry( 30, 30, 30, 10, 10, 10 ), new THREE.MultiMaterial( arrMaterial ) );
+            mesh.scale.x = - 1;
+            // The primy name use one of array.
+            mesh.name = mapKey;
+            // Fisheye
+            // for ( var i = 0, l = mesh.geometry.vertices.length; i < l; i ++ ) {
+            //     var vertex = mesh.geometry.vertices[ i ];
+            //     vertex.normalize();
+            //     vertex.multiplyScalar( 550 );
+            // }
+            mapRender[mapKey] = mesh;
+            parent.add( mesh );
+            return mesh;
         }
 
 		if (preview) {
