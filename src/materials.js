@@ -13,7 +13,7 @@ module.exports = (function () {
 		urlRegex = require('./utils/urlregex'),
 
 		dataUri = /^data:image\/(?:png|jpe?g|gif);/,
-		assetPath = __ASSET_PATH__,
+		assetPath = '//gw.alicdn.com/tps/',
 
 		images = {},
 
@@ -25,49 +25,58 @@ module.exports = (function () {
 			depth: THREE.MeshDepthMaterial
 		},
 		textureFiles = {
+    // Will use these when you need it.
 			'asphalt': {
+                map:'TB1kK63NVXXXXaVaFXXXXXXXXXX-512-512.jpg_320x320.jpg',
 				repeat: 12
 			},
 			'brick-tiles': {
+                map:'TB1YcUKNVXXXXbpXXXXXXXXXXXX-512-512.jpg_320x320.jpg',
 				repeat: 2
 			},
 			'bricks': {
 				type: 'phong',
 				repeat: 4,
-				normalMap: 'bricks-normal.jpg',
-				specularMap: 'bricks-specular.jpg'
+                map:'TB1rswLNVXXXXbcXXXXXXXXXXXX-512-512.jpg_320x320.jpg',
+				normalMap: 'TB1T.7hNVXXXXXlXVXXXXXXXXXX-512-512.jpg_320x320.jpg',
+				specularMap: 'TB1WIn.NVXXXXaPapXXXXXXXXXX-512-512.jpg_320x320.jpg'
 			},
 			'checkerboard': {
 				repeat: 10,
-				map: 'checkerboard.png'
+				map: 'TB17ZseNVXXXXbfaXXXXXXXXXXX-256-256.png_140x140.jpg'
 			},
 			'grass': {
+                map:'TB17jZqNVXXXXc4XFXXXXXXXXXX-256-256.jpg_140x140.jpg',
 				repeat: 12
 			},
 			'metal-floor': {
 				type: 'phong',
 				shininess: 100,
-
+                map:'TB18JAwNVXXXXbiXFXXXXXXXXXX-512-512.jpg_320x320.jpg',
 				repeat: 2
 			},
 			'metal': {
+                map:'TB1sEEhNVXXXXbSXVXXXXXXXXXX-512-512.jpg_320x320.jpg',
 				type: 'phong',
 				shininess: 100,
 				shading: THREE.SmoothShading,
-
 				repeat: 2
 			},
 			'stone': {
+                map:'TB1c37bNVXXXXXwaXXXXXXXXXXX-512-512.jpg_320x320.jpg',
 				repeat: 8
 			},
 			'tiles': {
+                map:'TB1BbZCNVXXXXaMXpXXXXXXXXXX-512-512.jpg_320x320.jpg',
 				repeat: 4
 			},
 			'weathered-wood': {
+                map:'TB12QIwNVXXXXXGXFXXXXXXXXXX-512-512.jpg_320x320.jpg',
 				repeat: 8
 			},
 			'wood': {
-				repeat: 4
+                map:'TB1rpEANVXXXXa8XpXXXXXXXXXX-512-512.jpg_320x320.jpg',
+                repeat: 4
 			}
 		},
 		textures = {},
@@ -226,23 +235,23 @@ module.exports = (function () {
 	}
 
 	//figure out if script is loaded relative so we know where to find the images
-	assetPath = (function () {
-		var url,
-			scripts;
-
-		if (document.currentScript) {
-			url = document.currentScript.getAttribute('src');
-		} else {
-			scripts = document.getElementsByTagName('script');
-			url = scripts[scripts.length - 1].getAttribute('src');
-		}
-
-		if (!urlRegex.test(url)) {
-			return url.replace(/[a-z\-\.]+\.js$/i, '');
-		}
-
-		return __ASSET_PATH__;
-	}());
+//	assetPath = (function () {
+//		var url,
+//			scripts;
+//
+//		if (document.currentScript) {
+//			url = document.currentScript.getAttribute('src');
+//		} else {
+//			scripts = document.getElementsByTagName('script');
+//			url = scripts[scripts.length - 1].getAttribute('src');
+//		}
+//
+//		if (!urlRegex.test(url)) {
+//			return url.replace(/[a-z\-\.]+\.js$/i, '');
+//		}
+//
+//		return __ASSET_PATH__;
+//	}());
 
 	materials = {
 		standard: function () {
@@ -257,7 +266,7 @@ module.exports = (function () {
 	forEach(textureFiles, function (props, key) {
 		function textureFactory(file, options) {
 			function imagePath(url) {
-				if ((/^[a-z0-9\/\-]+\.(png|jpg)$/i).test(url)) {
+				if ((/\.(png|jpg)$/i).test(url)) {
 					return assetPath + url;
 				}
 
@@ -267,7 +276,7 @@ module.exports = (function () {
 			options = options || {};
 
 			return function (opts) {
-				var texture = imageTexture(imagePath(require('./images/' + file)));
+				var texture = imageTexture(imagePath(file));
 
 				opts = assign({}, options, opts);
 

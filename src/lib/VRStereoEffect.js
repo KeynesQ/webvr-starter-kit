@@ -331,14 +331,15 @@ THREE.VRStereoEffect = function ( renderer, fullScreenElement, options ) {
 		// w /= window.devicePixelRatio || 1;
 		// h /= window.devicePixelRatio || 1;
 
-		/*
-		todo: make this work when CSS VR Rendering is fixed
-		http://blog.bitops.com/blog/2014/08/20/updated-firefox-vr-builds/
+		/**
+		 *  TODO: make this work when CSS VR Rendering is fixed
+		 *  http://blog.bitops.com/blog/2014/08/20/updated-firefox-vr-builds/
+         *  Open by kuilin.qkl
+         */
 		if (renderer instanceof THREE.CSS3DRenderer) {
 			renderer.render( leftScene, camera );
 			return;
 		}
-		*/
 
 		if (!vrMode && !vrPreview) {
 			renderer.enableScissorTest( false );

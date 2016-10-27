@@ -70,6 +70,29 @@
         waitRenderInative = 0,
 		animationCallbacks = [];
 
+    var isSupportWebgl = (function () {
+        var canvas = document.createElement('canvas');
+        var gl = null;
+        var experimental = false;
+        try {
+            gl = canvas.getContext('webgl');
+        } catch (x) {
+            gl = null;
+        }
+
+        if (gl === null) {
+            try {
+                gl = canvas.getContext('experimental-webgl');
+                experimental = true;
+            } catch (x) {
+                gl = null;
+            }
+        }
+        return Boolean(gl);
+    })();
+
+    window.isSupportWebgl = isSupportWebgl;
+
 	function isFullscreen() {
 		return !!(document.fullscreenElement ||
 			document.mozFullScreenElement ||
@@ -290,12 +313,14 @@
 
 		//create renderer and place in document
         // Antialiasing temporarily disabled to improve performance.
-		renderer = new THREE.WebGLRenderer({ antialias: false });
+		renderer = !isSupportWebgl?new THREE.CSS3DRenderer():new THREE.WebGLRenderer({ antialias: false });
         renderer.setClearColor(0x000000, 0);
         renderer.setSize(window.innerWidth, window.innerHeight);
-		renderer.domElement.addEventListener('webglcontextlost', function contextLost(event) {
-			console.log('lost context', event);
-		});
+		if (isSupportWebgl) {
+            renderer.domElement.addEventListener('webglcontextlost', function contextLost(event) {
+                console.log('lost context', event);
+            });
+        }
 		// renderer.shadowMapEnabled = true;
 		// renderer.shadowMapSoft = true;
 
@@ -432,7 +457,6 @@
 			window.addEventListener('load', attachCanvas, false);
 		}
 
-		VR.canvas.addEventListener('mozfullscreenerror', fullScreenError, false);
 		VR.canvas.addEventListener('webkitfullscreenerror', fullScreenError, false);
 		VR.canvas.addEventListener('fullscreenerror', fullScreenError, false);
 	}
@@ -451,10 +475,16 @@
 
 		eventEmitter = require('event-emitter');
 
+        //if (!isSupportWebgl) {
+            require('imports?THREE=three!./lib/CSS3DRenderer.js');
+          //  return;
+        //}
+
 		//my VR stuff. todo: move these to a separate repo or two for easy packaging
 		require('imports?THREE=three!./lib/VRStereoEffect');
 		require('imports?THREE=three!./lib/VRControls');
 	}
+
 
 	function initialize() {
 		//todo: set up button/info elements
@@ -585,7 +615,8 @@
 		body: bodyWrapper,
 		scene: scene,
 		renderer: renderer || null,
-		canvas: renderer && renderer.domElement || null
+		canvas: renderer && renderer.domElement || null,
+        isSupportWebgl: isSupportWebgl
 	};
 
 	objectMethods.forEach(function (method) {
@@ -625,4 +656,7 @@
 			return target;
 		}
 	});
+    // Compatible in android < 5.0
+    // Fix something what VR was undefined.
+    window.VR = VR;
 }());
