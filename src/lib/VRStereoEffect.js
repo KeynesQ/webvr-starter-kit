@@ -326,10 +326,11 @@ THREE.VRStereoEffect = function ( renderer, fullScreenElement, options ) {
 			camera.updateMatrixWorld();
 		}
 
-		w = width || renderer.domElement.width;
-		h = height || renderer.domElement.height;
-		// w /= window.devicePixelRatio || 1;
-		// h /= window.devicePixelRatio || 1;
+		// w = width || renderer.domElement.width;
+		// h = height || renderer.domElement.height;
+        // This code would not be annotated if mobile model.
+		w /= window.devicePixelRatio || 1;
+		h /= window.devicePixelRatio || 1;
 
 		/**
 		 *  TODO: make this work when CSS VR Rendering is fixed
@@ -352,7 +353,7 @@ THREE.VRStereoEffect = function ( renderer, fullScreenElement, options ) {
 
 		if (!hmdDevice) {
 			// left
-			cameraLeft.fov = camera.fov;
+			cameraLeft.fov = camera.fov * 1.2;
 			cameraLeft.aspect = 0.5 * camera.aspect;
 			cameraLeft.near = camera.near;
 			cameraLeft.far = camera.far;
@@ -360,7 +361,7 @@ THREE.VRStereoEffect = function ( renderer, fullScreenElement, options ) {
 
 			// right
 
-			cameraRight.fov = camera.fov;
+			cameraRight.fov = camera.fov * 1.2;
 			cameraRight.aspect = 0.5 * camera.aspect;
 			cameraRight.near = camera.near;
 			cameraRight.far = camera.far;
@@ -384,9 +385,8 @@ THREE.VRStereoEffect = function ( renderer, fullScreenElement, options ) {
 		cameraLeft.updateMatrixWorld();
 		cameraRight.updateMatrixWorld();
 
-		//
-
-        w = renderer.context.drawingBufferWidth / 2;
+        // Bug fixed if device's Ratio > 1
+        w = renderer.context.drawingBufferWidth / ( 2 * window.devicePixelRatio );
 
 		if (renderTarget) {
 			renderer.setRenderTarget(renderTarget);

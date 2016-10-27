@@ -4,13 +4,11 @@
         <meta charset="utf-8">
         <title>WebVR Starter Kit - 3D Panorama Example</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-        <script type="text/javascript" src="http://t.skip.daily.taobao.net/share/demo/1.4.2/example/first/gcanvas/bridge/windvane/bridge.js"></script>
-        <script type="text/javascript" src="http://t.skip.daily.taobao.net/share/demo/1.4.2/example/first/gcanvas/core/util/gutil.js"></script> 
-        <script type="text/javascript" src="http://t.skip.daily.taobao.net/share/demo/1.4.2/example/first/gcanvas/core/canvas/gcanvas.js"></script>
-        <script type="text/javascript" src="http://t.skip.daily.taobao.net/share/demo/1.4.2/example/first/gcanvas/gcanvas_adaptor.js"></script>
+        <script type="text/javascript" src="//g.alicdn.com/trip/static/0.1.23/??panorama/gutil.min.js,panorama/gcanvas.min.js,panorama/gcanvas_adaptor.min.js"></script>
     </head>
     <body onload="start()">
         <script type="text/javascript" src="../build/vr.dev.js" charset="utf-8"></script>
+        <!--<script type="text/javascript" src="../build/vr.dev.js" charset="utf-8"></script>-->
         <script type="text/javascript">
         var canvas = document.createElement('canvas');
         var gl = null;
@@ -24,10 +22,17 @@
         }
         /// alert(gl);
         function init() {
+            //alert(VR.panorama);
             VR.panorama({
                 preview: '//gw.alicdn.com/bao/uploaded/i5/TB1F_7_NXXXXXasXXXX_T9n9XXX_034720.jpg_320x320.jpg',
                 // src: '//gw.alicdn.com/tps/TB1usDhMVXXXXaVaXXXXXXXXXXX-3008-1504.jpg_640x640.jpg'
-                src: '//gw.alicdn.com/bao/uploaded/i5/TB1F_7_NXXXXXasXXXX_T9n9XXX_034720.jpg'
+                src: '//gw.alicdn.com/bao/uploaded/i5/TB1F_7_NXXXXXasXXXX_T9n9XXX_034720.jpg',
+                left : '//gw.alicdn.com/bao/uploaded/i7/TB1IMHaNpXXXXb1XVXXToel8VXX_031752.jpg',
+                right: '//gw.alicdn.com/bao/uploaded/i6/TB1yRjfNpXXXXX3XVXXToel8VXX_031752.jpg',
+                top: '//gw.alicdn.com/bao/uploaded/i6/TB1Yvq_NpXXXXXYaXXXToel8VXX_031752.jpg',
+                down: '//gw.alicdn.com/bao/uploaded/i2/TB1oRO8NpXXXXaGaXXXToel8VXX_031752.jpg',
+                front: '//gw.alicdn.com/bao/uploaded/i5/TB1aAS8NpXXXXaNaXXXdAal8VXX_031751.jpg',
+                back: '//gw.alicdn.com/bao/uploaded/i3/TB1OcaQNpXXXXbGaFXXToel8VXX_031752.jpg'
                 //src: 'assets/gooseberry_benchmark_panorama.jpg',
                 //stereo: 'vertical'
             });
@@ -44,7 +49,7 @@
         init();
         function start() {
           //it();
-          // GCanvas.start(init, init);
+        //    GCanvas.start(init, function (e) {alert(JSON.stringify(e))});
         }
         /*
         Scene from The Gooseberry Open Movie Project - https://gooseberry.blender.org/

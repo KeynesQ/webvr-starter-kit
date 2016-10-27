@@ -88,7 +88,8 @@
                 gl = null;
             }
         }
-        return Boolean(gl);
+        return false;
+        // return Boolean(gl);
     })();
 
     window.isSupportWebgl = isSupportWebgl;
@@ -238,8 +239,10 @@
 	function visibilityChange() {
 		if (document.hidden || document.mozHidden || document.msHidden || document.webkitHidden) {
 			audioListener.volume(0);
+            stop();
 		} else {
 			audioListener.volume(1);
+            start();
 		}
 	}
 
@@ -317,6 +320,7 @@
         renderer.setClearColor(0x000000, 0);
         renderer.setSize(window.innerWidth, window.innerHeight);
 		if (isSupportWebgl) {
+            renderer.setPixelRatio( window.devicePixelRatio );
             renderer.domElement.addEventListener('webglcontextlost', function contextLost(event) {
                 console.log('lost context', event);
             });
@@ -344,8 +348,11 @@
 			//need a camera with which to look at stuff
             // The viewer proportion will be a square not a rect.
 			camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, NEAR, FAR);
-            camera.setFocalLength(8);
-            camera.zoom = 0.8;
+            camera.fov = camera.fov * 1.2;
+            camera.autoBackward = true;
+            camera.updateProjectionMatrix();
+            // camera.setFocalLength(8);
+            // camera.zoom = 0.8;
             // camera.focus = 1;
 			// camera.position.set(-0.000001, 1, 0.0001);
             // camera.autoBackward = true;
@@ -413,6 +420,8 @@
 		mouseControls = new THREE.OrbitControls(camera, renderer.domElement);
 		mouseControls.target0.set(0, 0.0001, 0.000);
 		mouseControls.target.copy(mouseControls.target0);
+        mouseControls.enableZoom = true;
+        mouseControls.enablePan = false;
 		mouseControls.update();
 
 		//todo: remove any default lights once other lights are added

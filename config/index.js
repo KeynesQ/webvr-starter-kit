@@ -3,6 +3,8 @@ module.exports = (function () {
 
 	var extend = require('xtend');
 	var webpack = require('webpack');
+    var ClosureCompilerPlugin = require('webpack-closure-compiler');
+    var CompressionPlugin = require('compression-webpack-plugin');
 	var pkg = require('../package.json');
 
 	var banner = [
@@ -99,10 +101,10 @@ module.exports = (function () {
 			new webpack.ResolverPlugin(
 				new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin('bower.json', ['main'])
 			),
-			new webpack.DefinePlugin({
-				__DEV__: true,
-				__ASSET_PATH__: JSON.stringify('http://pov-tc.pbs.org/pov/flv/2015/webvr-starter-kit/')
-			})
+//			new webpack.DefinePlugin({
+//				__DEV__: true,
+//				__ASSET_PATH__: JSON.stringify('http://pov-tc.pbs.org/pov/flv/2015/webvr-starter-kit/')
+//			})
 		]
 	});
 
@@ -118,10 +120,10 @@ module.exports = (function () {
 			new webpack.ResolverPlugin(
 				new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin('bower.json', ['main'])
 			),
-			new webpack.DefinePlugin({
-				__DEV__: false,
-				__ASSET_PATH__: JSON.stringify('http://pov-tc.pbs.org/pov/flv/2015/webvr-starter-kit/')
-			}),
+		//	new webpack.DefinePlugin({
+		//		__DEV__: false,
+		//		__ASSET_PATH__: JSON.stringify('http://pov-tc.pbs.org/pov/flv/2015/webvr-starter-kit/')
+		//	}),
 			new webpack.DefinePlugin({
 				'process.env': {
 					// This has effect on the react lib size
@@ -129,9 +131,19 @@ module.exports = (function () {
 				}
 			}),
 			new webpack.optimize.DedupePlugin(),
+
 			new webpack.optimize.UglifyJsPlugin({
+                mangle: true,
 	            compress: {
-	                warnings: false
+	                warnings: false,
+                    properties: true,
+                    drop_console: true,
+                    sequences: true,
+                    dead_code: true,
+                    conditionals: true,
+                    booleans: true,
+                    unused: true,
+                    if_return: true,
 	            },
 	        }),
 			new webpack.BannerPlugin(banner)
