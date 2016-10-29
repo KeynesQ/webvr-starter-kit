@@ -209,7 +209,9 @@
 		vrObjects.forEach(function (object) {
 			object.update(now);
 		});
-        mouseControls.update();
+        if (mouseControls.autoRotate === true) {
+            mouseControls.update();
+        }
 
 		raycast();
 
@@ -428,8 +430,8 @@
 		mouseControls.target0.set(0, 0.0001, 0.000);
 		mouseControls.target.copy(mouseControls.target0);
         mouseControls.enableZoom = true;
-        mouseControls.enablePan = false;
-        mouseControls.autoRotate = true;
+        mouseControls.enablePan = true;
+        mouseControls.autoRotate = false;
 		if (renderMode === MODE_CSS) {
         	mouseControls.autoRotateSpeed = 0.5;
 		} else {
@@ -441,13 +443,26 @@
             if (autoRotateTimer) {
                 clearTimeout(autoRotateTimer);
             }
-            mouseControls.autoRotate = false;
+            if (orientationEnabled) {
+                mouseControls.enabled = false;
+                mouseControls.autoRotate = false;
+            } else {
+                mouseControls.enabled = true;
+                mouseControls.autoRotate = false;
+            }
         });
         mouseControls.addEventListener('end', function(){
             autoRotateTimer = setTimeout(function(){
-                mouseControls.autoRotate = true;
+                if (orientationEnabled) {
+                    mouseControls.enabled = false;
+                    mouseControls.autoRotate = false;
+                } else {
+                    mouseControls.enabled = true;
+                    mouseControls.autoRotate = true;
+                }
             }, 2000);
         });
+        mouseControls.enabled = false;
 		mouseControls.update();
 
 		//todo: remove any default lights once other lights are added
@@ -549,6 +564,10 @@
 		start: start,
 		stop: stop,
 		resize: resize,
+        controls: mouseControls,
+        orientationPossible: function () {
+            return orientationPossible;
+        },
 
 		THREE: THREE,
 
@@ -591,6 +610,7 @@
 			//full screen and render two eyes
 			//always full screen
 			vrEffect.requestFullScreen();
+			mouseControls.enabled = false;
 		},
 
 		exitVR: function () {
@@ -601,9 +621,9 @@
 			}
             vrEffect.exit();
 
-			mouseControls.enabled = true;
 			vrControls.freeze = !orientationEnabled;
 			camera.rotation.set(0, 0, 0);
+			mouseControls.enabled = true;
 		},
 
 		vrMode: function () {
@@ -615,16 +635,18 @@
 		},
 		enableOrientation: function () {
 			orientationEnabled = true;
-            mouseControls.autoRotate = false;
 			if (!vrMode) {
 				vrControls.freeze = false;
 			}
+			mouseControls.enabled = false;
+            mouseControls.autoRotate = false;
 		},
 		disableOrientation: function () {
 			orientationEnabled = false;
-            mouseControls.autoRotate = true;
 			camera.rotation.set(0, 0, 0);
 			vrControls.freeze = !vrMode;
+			mouseControls.enabled = true;
+            mouseControls.autoRotate = true;
 		},
 
 		isFullscreen: isFullscreen,
