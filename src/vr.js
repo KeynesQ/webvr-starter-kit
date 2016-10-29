@@ -18,6 +18,9 @@
 			document.msExitFullscreen ||
 			nop
 		).bind(document),
+	// Const
+		MODE_CSS = 'css3d',
+		MODE_CANVAS = 'canvas',
 
 	//scene assets
 		camera,
@@ -88,7 +91,6 @@
                 gl = null;
             }
         }
-        // return false;
         return Boolean(gl);
     })();
 
@@ -240,10 +242,8 @@
 	function visibilityChange() {
 		if (document.hidden || document.mozHidden || document.msHidden || document.webkitHidden) {
 			audioListener.volume(0);
-            stop();
 		} else {
 			audioListener.volume(1);
-            start();
 		}
 	}
 
@@ -305,7 +305,7 @@
 		}, false);
 	}
 
-	function initScene() {
+	function initScene(mode) {
 		function attachCanvas() {
 			document.body.insertBefore(renderer.domElement, document.body.firstChild || null);
 			resize();
@@ -314,12 +314,20 @@
 		if (renderer) {
 			return;
 		}
+		var renderMode = mode || 'auto';
+        if (renderMode === MODE_CSS) {
+            renderer = new THREE.CSS3DRenderer();
+        } else if (renderMode === MODE_CANVAS) {
+            renderer = new THREE.CanvasRenderer();
+            renderer.setPixelRatio( window.devicePixelRatio );
+        } else {
+            renderer = !isSupportWebgl?new THREE.CanvasRenderer():new THREE.WebGLRenderer({ antialias: false });
+            renderer.setPixelRatio( window.devicePixelRatio );
+        }
 
 		//create renderer and place in document
         // Antialiasing temporarily disabled to improve performance.
-		renderer = !isSupportWebgl?new THREE.CanvasRenderer():new THREE.WebGLRenderer({ antialias: false });
         renderer.setClearColor(0x000000, 0);
-        renderer.setPixelRatio( window.devicePixelRatio );
         renderer.setSize(window.innerWidth, window.innerHeight);
 		if (isSupportWebgl) {
             renderer.domElement.addEventListener('webglcontextlost', function contextLost(event) {
@@ -422,7 +430,11 @@
         mouseControls.enableZoom = true;
         mouseControls.enablePan = false;
         mouseControls.autoRotate = true;
-        mouseControls.autoRotateSpeed = 1.0;
+		if (renderMode === MODE_CSS) {
+        	mouseControls.autoRotateSpeed = 0.5;
+		} else {
+        	mouseControls.autoRotateSpeed = 1.0;
+		}
         mouseControls.enableDamping = true;
         mouseControls.dampingFactor = 0.55;
         mouseControls.addEventListener('start', function(){
@@ -499,6 +511,9 @@
 		eventEmitter = require('event-emitter');
 
         //if (!isSupportWebgl) {
+			// compatible mode
+			// Fixed render in all mobile device
+			require('imports?THREE=three!./lib/CSS3DRenderer.js');
             require('imports?THREE=three!./lib/CanvasRenderer.js');
             require('imports?THREE=three!./lib/Projector.js');
           //  return;
@@ -510,10 +525,10 @@
 	}
 
 
-	function initialize() {
+	function initialize(renderMode) {
 		//todo: set up button/info elements
 
-		initScene();
+		initScene(renderMode);
 
 		initShake();
 
@@ -650,7 +665,7 @@
 			key;
 
 		VR[method] = function (options) {
-			var obj = new VRObject(scene, creator, body, options);
+			var obj = new VRObject(scene, creator, body, options, renderer);
 			vrObjects.push(obj);
 			if (obj.raycastable) {
 				raycastable.push(obj.object);
@@ -659,7 +674,7 @@
 		};
 
 		VRObject.prototype[method] = function (options) {
-			var obj = new VRObject(this.object, creator, body, options);
+			var obj = new VRObject(this.object, creator, body, options, renderer);
 			vrObjects.push(obj);
 			if (obj.raycastable) {
 				raycastable.push(obj.object);

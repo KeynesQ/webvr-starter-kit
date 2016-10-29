@@ -23,6 +23,8 @@
         /// alert(gl);
         function init() {
             //alert(VR.panorama);
+            VR.init('css3d');
+            VR.start();
             VR.panorama({
                 preview: '//gw.alicdn.com/bao/uploaded/i5/TB1F_7_NXXXXXasXXXX_T9n9XXX_034720.jpg_320x320.jpg',
                 // src: '//gw.alicdn.com/tps/TB1usDhMVXXXXaVaXXXXXXXXXXX-3008-1504.jpg_640x640.jpg'
@@ -48,7 +50,7 @@
         }
         function start() {
           //it();
-            GCanvas.start(init, init);
+           GCanvas.start(init, init);
         }
         /*
         Scene from The Gooseberry Open Movie Project - https://gooseberry.blender.org/

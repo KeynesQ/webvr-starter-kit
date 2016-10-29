@@ -33,7 +33,7 @@ module.exports = (function () {
 		return object.geometry.boundingBox.distanceToPoint(scratchVector1);
 	}
 
-	function VRObject(parent, creator, body, options) {
+	function VRObject(parent, creator, body, options, renderer) {
 		var material,
 			object,
 			self = this,
@@ -97,7 +97,7 @@ module.exports = (function () {
 		}
 
 		//todo: get material from options
-		this.object = object = creator.call(this, parent, options);
+		this.object = object = creator.call(this, parent, options, renderer);
 		this.parent = this.object.parent || parent;
 
 		if (object instanceof THREE.Mesh) {

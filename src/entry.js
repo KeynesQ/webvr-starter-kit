@@ -18,7 +18,7 @@
 
 		//todo: set up button/info elements
 
-		VR.init();
+//		VR.init();
 
         VR.noSleep = new NoSleep();
 		window.addEventListener('resize', VR.resize, false);
@@ -35,5 +35,5 @@
 	}
 
 	initialize();
-	VR.start();
+//	VR.start();
 }());

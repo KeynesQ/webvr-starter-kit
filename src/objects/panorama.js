@@ -26,11 +26,12 @@ module.exports = (function () {
     // Will use css3drenderer if not support webgl.
     
     var texturePlaceholder = document.createElement( 'canvas' );
-    texturePlaceholder.width = 128;
-    texturePlaceholder.height = 128;
+    texturePlaceholder.width = 64;
+    texturePlaceholder.height = 64;
     var context = texturePlaceholder.getContext( '2d' );
     context.fillStyle = 'rgb( 200, 200, 200 )';
     context.fillRect( 0, 0, texturePlaceholder.width, texturePlaceholder.height );
+	var STR_CHILDEN_NAME = 'obj3DElement';
 
     function loadTexture( path, _parent ) {
         var texture = new THREE.Texture( texturePlaceholder );
@@ -47,7 +48,7 @@ module.exports = (function () {
         return material;
     }
 
-	return function panorama(parent, options) {
+	return function panorama(parent, options, renderer) {
         var src,
             preview,
             cubeSrc = {};
@@ -92,6 +93,70 @@ module.exports = (function () {
             });
             return mapRender[mapKey];
         }
+		if (renderer instanceof THREE.CSS3DRenderer) {
+			var cube = new THREE.Object3D();
+			var sides = [
+                {
+                    url: cubeSrc.right,
+                    position: [ -512, 0, 0 ],
+                    rotation: [ 0, Math.PI / 2, 0 ]
+                },
+                {
+                    url: cubeSrc.left,
+                    position: [ 512, 0, 0 ],
+                    rotation: [ 0, -Math.PI / 2, 0 ]
+                },
+                {
+                    url: cubeSrc.top,
+                    position: [ 0,  512, 0 ],
+                    rotation: [ Math.PI / 2, 0, Math.PI ]
+                },
+                {
+                    url: cubeSrc.down,
+                    position: [ 0, -512, 0 ],
+                    rotation: [ - Math.PI / 2, 0, Math.PI ]
+                },
+                {
+                    url: cubeSrc.front,
+                    position: [ 0, 0,  512 ],
+                    rotation: [ 0, Math.PI, 0 ]
+                },
+                {
+                    url: cubeSrc.back,
+                    position: [ 0, 0, -512 ],
+                    rotation: [ 0, 0, 0 ]
+                }
+            ];
+            // Remove children from cube;
+            for ( var i = 0; i < sides.length; i ++ ) {
+                if (cube.getObjectByName(STR_CHILDEN_NAME + i)) {
+                    cube.remove(cube.getObjectByName(STR_CHILDEN_NAME + i));
+                }
+            }
+            parent.remove(cube);
+            parent.add(cube);
+            var callbackOnload = function () {
+                // Notify outside to do something when image has been loaded.
+                parent.dispatchEvent({
+                    type: 'img-loaded'
+                });
+            };
+            for ( var i = 0; i < sides.length; i ++ ) {
+                var side = sides[ i ];
+                var element = document.createElement( 'img' );
+                element.width = 1026; // 2 pixels extra to close the gap.
+                element.src = side.url;
+                element.onload = callbackOnload;
+                var object = new THREE.CSS3DObject( element );
+                object.name = STR_CHILDEN_NAME + i;
+                object.position.fromArray( side.position );
+                object.rotation.fromArray( side.rotation );
+                cube.add( object );
+            }
+			cube.name = mapKey;
+            return cube;
+
+		}
         if (!isSupportWebgl) {
             var arrMaterial = [
                 loadTexture( cubeSrc.right, parent ), // right
@@ -102,7 +167,7 @@ module.exports = (function () {
                 loadTexture( cubeSrc.back, parent ) // back
             ];
 
-            mesh = new THREE.Mesh( new THREE.BoxGeometry( 30, 30, 30, 10, 10, 10 ), new THREE.MultiMaterial( arrMaterial ) );
+            mesh = new THREE.Mesh( new THREE.BoxGeometry( 60, 60, 60, 20, 20, 20 ), new THREE.MultiMaterial( arrMaterial ) );
             mesh.scale.x = - 1;
             // The primy name use one of array.
             mesh.name = mapKey;

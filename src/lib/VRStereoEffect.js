@@ -337,7 +337,7 @@ THREE.VRStereoEffect = function ( renderer, fullScreenElement, options ) {
 		 *  http://blog.bitops.com/blog/2014/08/20/updated-firefox-vr-builds/
          *  Open by kuilin.qkl
          */
-		if (renderer instanceof THREE.CanvasRenderer) {
+		if (renderer instanceof THREE.CanvasRenderer || renderer instanceof THREE.CSS3DRenderer) {
 			renderer.render( leftScene, camera );
 			return;
 		}
