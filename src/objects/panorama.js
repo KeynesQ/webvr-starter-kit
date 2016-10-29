@@ -94,6 +94,16 @@ module.exports = (function () {
             return mapRender[mapKey];
         }
 		if (renderer instanceof THREE.CSS3DRenderer) {
+            var lastCube = parent.getObjectByName('cube');
+            if (lastCube) {
+                for ( var i = 0; i < 6; i ++ ) {
+                    if (lastCube.getObjectByName(STR_CHILDEN_NAME + i)) {
+                        lastCube.remove(lastCube.getObjectByName(STR_CHILDEN_NAME + i));
+                    }
+                }
+                //
+                parent.remove(lastCube);
+            }
 			var cube = new THREE.Object3D();
 			var sides = [
                 {
@@ -128,12 +138,6 @@ module.exports = (function () {
                 }
             ];
             // Remove children from cube;
-            for ( var i = 0; i < sides.length; i ++ ) {
-                if (cube.getObjectByName(STR_CHILDEN_NAME + i)) {
-                    cube.remove(cube.getObjectByName(STR_CHILDEN_NAME + i));
-                }
-            }
-            parent.remove(cube);
             parent.add(cube);
             var callbackOnload = function () {
                 // Notify outside to do something when image has been loaded.
@@ -153,7 +157,7 @@ module.exports = (function () {
                 object.rotation.fromArray( side.rotation );
                 cube.add( object );
             }
-			cube.name = mapKey;
+			cube.name = 'cube';
             return cube;
 
 		}
