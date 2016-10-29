@@ -31,6 +31,7 @@
 		vrControls,
 		vrEffect,
 		mouseControls,
+        autoRotateTimer = null,
 		raycaster,
 		target,
 
@@ -425,7 +426,6 @@
 
 		// mouse control in case got no orientation device
         // Re-start autorotate if user has not been controlled.
-        var autoRotateTimer = null;
 		mouseControls = new THREE.OrbitControls(camera, renderer.domElement);
 		mouseControls.target0.set(0, 0.0001, 0.000);
 		mouseControls.target.copy(mouseControls.target0);
@@ -634,6 +634,7 @@
 			return !!orientationEnabled;
 		},
 		enableOrientation: function () {
+            // clearTimeout(autoRotateTimer);
 			orientationEnabled = true;
 			if (!vrMode) {
 				vrControls.freeze = false;
@@ -642,6 +643,7 @@
             mouseControls.autoRotate = false;
 		},
 		disableOrientation: function () {
+            // clearTimeout(autoRotateTimer);
 			orientationEnabled = false;
 			camera.rotation.set(0, 0, 0);
 			vrControls.freeze = !vrMode;
