@@ -69,7 +69,7 @@ module.exports = (function () {
 			immed: true,
 			iterator: true,
 			latedef: true,
-			maxparams: 5,
+			maxparams: 6,
 			newcap: true,
 			noarg: true,
 			nonbsp: true,

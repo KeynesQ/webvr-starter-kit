@@ -36,6 +36,7 @@
 		target,
 
 		bodyWrapper,
+        RENDERER_ID = 'J_VR_Renderer',
 		cameraWrapper,
 
 		floor,
@@ -310,6 +311,7 @@
 
 	function initScene(mode) {
 		function attachCanvas() {
+            renderer.domElement.id = RENDERER_ID;
 			document.body.insertBefore(renderer.domElement, document.body.firstChild || null);
 			resize();
 		}
@@ -324,7 +326,7 @@
             renderer = new THREE.CanvasRenderer();
             renderer.setPixelRatio( window.devicePixelRatio );
         } else {
-            renderer = !isSupportWebgl?new THREE.CanvasRenderer():new THREE.WebGLRenderer({ antialias: false });
+            renderer = !isSupportWebgl?new THREE.CSS3DRenderer():new THREE.WebGLRenderer({ antialias: false });
             renderer.setPixelRatio( window.devicePixelRatio );
         }
 
@@ -405,8 +407,10 @@
 				VR.exitVR();
 			}
 
-			camera.position.set(0, 0.0001, 0.0001);
-			camera.rotation.set(0, 0, 0);
+            try {
+                camera.position.set(0, 0.0001, 0.0001);
+                camera.rotation.set(0, 0, 0);
+            } catch (e) {}
 
 			VR.emit('fullscreenchange', evt);
 		});
@@ -622,7 +626,9 @@
             vrEffect.exit();
 
 			vrControls.freeze = !orientationEnabled;
-			camera.rotation.set(0, 0, 0);
+            if (camera.rotation) {
+			    camera.rotation.set(0, 0, 0);
+            }
 			mouseControls.enabled = true;
 		},
 
@@ -645,7 +651,9 @@
 		disableOrientation: function () {
             // clearTimeout(autoRotateTimer);
 			orientationEnabled = false;
-			camera.rotation.set(0, 0, 0);
+            if (camera.rotation) {
+			    camera.rotation.set(0, 0, 0);
+            }
 			vrControls.freeze = !vrMode;
 			mouseControls.enabled = true;
             mouseControls.autoRotate = true;
@@ -676,6 +684,7 @@
 			}
 		},
 
+        id: RENDERER_ID,
 		camera: cameraWrapper,
 		body: bodyWrapper,
 		scene: scene,
@@ -689,7 +698,7 @@
 			key;
 
 		VR[method] = function (options) {
-			var obj = new VRObject(scene, creator, body, options, renderer);
+			var obj = new VRObject(scene, creator, body, options, renderer, VR);
 			vrObjects.push(obj);
 			if (obj.raycastable) {
 				raycastable.push(obj.object);
@@ -698,7 +707,7 @@
 		};
 
 		VRObject.prototype[method] = function (options) {
-			var obj = new VRObject(this.object, creator, body, options, renderer);
+			var obj = new VRObject(this.object, creator, body, options, renderer, VR);
 			vrObjects.push(obj);
 			if (obj.raycastable) {
 				raycastable.push(obj.object);

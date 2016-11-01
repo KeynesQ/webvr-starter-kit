@@ -48,7 +48,7 @@ module.exports = (function () {
         return material;
     }
 
-	return function panorama(parent, options, renderer) {
+	return function panorama(parent, options, renderer, root) {
         var src,
             preview,
             cubeSrc = {};
@@ -94,6 +94,11 @@ module.exports = (function () {
             return mapRender[mapKey];
         }
 		if (renderer instanceof THREE.CSS3DRenderer) {
+            var tmpStatus = false;
+            if (root.orientationEnabled()) {
+                tmpStatus = true;
+                root.disableOrientation();
+            }
             var lastCube = parent.getObjectByName('cube');
             if (lastCube) {
                 for ( var i = 0; i < 6; i ++ ) {
@@ -101,9 +106,17 @@ module.exports = (function () {
                         lastCube.remove(lastCube.getObjectByName(STR_CHILDEN_NAME + i));
                     }
                 }
-                //
+                // Force delete last image element.
+                // O(6)
+                for ( var i = 0; i < 6; i ++ ) {
+                    var eleImg = document.getElementById(STR_CHILDEN_NAME + i); 
+                    if (eleImg) {
+                        eleImg.parentNode.removeChild(eleImg);
+                    }
+                }
                 parent.remove(lastCube);
             }
+
 			var cube = new THREE.Object3D();
 			var sides = [
                 {
@@ -150,6 +163,7 @@ module.exports = (function () {
                 var element = document.createElement( 'img' );
                 element.width = 1026; // 2 pixels extra to close the gap.
                 element.src = side.url;
+                element.id = STR_CHILDEN_NAME + i;
                 element.onload = callbackOnload;
                 var object = new THREE.CSS3DObject( element );
                 object.name = STR_CHILDEN_NAME + i;
@@ -158,6 +172,10 @@ module.exports = (function () {
                 cube.add( object );
             }
 			cube.name = 'cube';
+            // This is very suck to fix something what change the provide has been blink.
+            if (tmpStatus) {
+                root.enableOrientation();
+            }
             return cube;
 
 		}

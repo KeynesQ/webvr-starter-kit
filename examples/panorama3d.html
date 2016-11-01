@@ -25,7 +25,7 @@
             //alert(VR.panorama);
             VR.init('css3d');
             VR.start();
-            VR.enableOrientation();
+            VR.disableOrientation();
             VR.panorama({
                 preview: '//gw.alicdn.com/bao/uploaded/i5/TB1F_7_NXXXXXasXXXX_T9n9XXX_034720.jpg_320x320.jpg',
                 // src: '//gw.alicdn.com/tps/TB1usDhMVXXXXaVaXXXXXXXXXXX-3008-1504.jpg_640x640.jpg'
@@ -53,7 +53,37 @@
                 //src: 'assets/gooseberry_benchmark_panorama.jpg',
                 //stereo: 'vertical'
             });
-            }, 5000);
+            setTimeout(function () {
+            VR.panorama({
+                preview: '//gw.alicdn.com/bao/uploaded/i5/TB1F_7_NXXXXXasXXXX_T9n9XXX_034720.jpg_320x320.jpg',
+                // src: '//gw.alicdn.com/tps/TB1usDhMVXXXXaVaXXXXXXXXXXX-3008-1504.jpg_640x640.jpg'
+                src: '//gw.alicdn.com/uploaded/i5/TB1d8TkNpXXXXbkXFXXaMum8VXX_031754.jpg',
+                left : '//gw.alicdn.com/bao/uploaded/i3/TB1uwSUNpXXXXcNapXXZLCk8VXX_031743.jpg',
+                right: '//gw.alicdn.com/bao/uploaded/i4/TB17qYBNpXXXXaKXXXXCzKk8VXX_031744.jpg',
+                top: '//gw.alicdn.com/bao/uploaded/i1/TB1cT6nNpXXXXX0XFXXCzKk8VXX_031744.jpg',
+                down: '//gw.alicdn.com/bao/uploaded/i3/TB1YOfoNpXXXXXaXFXXCzKk8VXX_031744.jpg',
+                front: '//gw.alicdn.com/bao/uploaded/i8/TB1kRTwNpXXXXclXXXXZLCk8VXX_031743.jpg',
+                back: '//gw.alicdn.com/bao/uploaded/i2/TB19y96NpXXXXbKaXXXCzKk8VXX_031744.jpg'
+                //src: 'assets/gooseberry_benchmark_panorama.jpg',
+                //stereo: 'vertical'
+            });
+            setTimeout(function () {
+            VR.panorama({
+                preview: '//gw.alicdn.com/bao/uploaded/i5/TB1F_7_NXXXXXasXXXX_T9n9XXX_034720.jpg_320x320.jpg',
+                // src: '//gw.alicdn.com/tps/TB1usDhMVXXXXaVaXXXXXXXXXXX-3008-1504.jpg_640x640.jpg'
+                src: '//gw.alicdn.com/uploaded/i5/TB1d8TkNpXXXXbkXFXXaMum8VXX_031754.jpg',
+                left : '//gw.alicdn.com/bao/uploaded/i3/TB1uwSUNpXXXXcNapXXZLCk8VXX_031743.jpg',
+                right: '//gw.alicdn.com/bao/uploaded/i4/TB17qYBNpXXXXaKXXXXCzKk8VXX_031744.jpg',
+                top: '//gw.alicdn.com/bao/uploaded/i1/TB1cT6nNpXXXXX0XFXXCzKk8VXX_031744.jpg',
+                down: '//gw.alicdn.com/bao/uploaded/i3/TB1YOfoNpXXXXXaXFXXCzKk8VXX_031744.jpg',
+                front: '//gw.alicdn.com/bao/uploaded/i8/TB1kRTwNpXXXXclXXXXZLCk8VXX_031743.jpg',
+                back: '//gw.alicdn.com/bao/uploaded/i2/TB19y96NpXXXXbKaXXXCzKk8VXX_031744.jpg'
+                //src: 'assets/gooseberry_benchmark_panorama.jpg',
+                //stereo: 'vertical'
+            });
+            }, 100);
+            }, 100);
+            }, 100);
 //            var box = VR.box().setMaterial('wood').moveTo(0, -2, -8);
 //            box.text({
 //                font: '40pt "微软雅黑"',
