@@ -1,0 +1,13 @@
+{
+  "name": "DeviceOrientationControls",
+  "_cacheHeaders": {
+    "ETag": "\"f4111292f012c5b6be55f619ca95f823067f0dd5\"",
+    "Content-Length": "916",
+    "Content-Type": "text/plain; charset=utf-8"
+  },
+  "_release": "e-tag:f4111292f",
+  "main": "index.js",
+  "_source": "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/js/controls/DeviceOrientationControls.js",
+  "_target": "*",
+  "_originalSource": "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/js/controls/DeviceOrientationControls.js"
+}

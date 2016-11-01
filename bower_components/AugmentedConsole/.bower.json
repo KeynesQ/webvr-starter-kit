@@ -1,0 +1,13 @@
+{
+  "name": "AugmentedConsole",
+  "_cacheHeaders": {
+    "ETag": "\"f66cc8e063d3ad623eda0cf82fa8fe44373673cb\"",
+    "Content-Length": "606",
+    "Content-Type": "text/plain; charset=utf-8"
+  },
+  "_release": "e-tag:f66cc8e06",
+  "main": "index.js",
+  "_source": "https://raw.githubusercontent.com/spite/THREE.AugmentedConsole.js/master/src/THREE.AugmentedConsole.js",
+  "_target": "*",
+  "_originalSource": "https://raw.githubusercontent.com/spite/THREE.AugmentedConsole.js/master/src/THREE.AugmentedConsole.js"
+}

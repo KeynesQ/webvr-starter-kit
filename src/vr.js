@@ -329,6 +329,9 @@
             renderer = !isSupportWebgl?new THREE.CSS3DRenderer():new THREE.WebGLRenderer({ antialias: false });
             renderer.setPixelRatio( window.devicePixelRatio );
         }
+        if (renderer instanceof THREE.CSS3DRenderer) {
+            renderer.domElement.style.position = 'fixed';
+        }
 
 		//create renderer and place in document
         // Antialiasing temporarily disabled to improve performance.
@@ -434,6 +437,7 @@
 		mouseControls.target0.set(0, 0.0001, 0.000);
 		mouseControls.target.copy(mouseControls.target0);
         mouseControls.enableZoom = true;
+        mouseControls.noZoom = false;
         mouseControls.enablePan = true;
         mouseControls.autoRotate = false;
 		if (renderMode === MODE_CSS) {
@@ -568,7 +572,9 @@
 		start: start,
 		stop: stop,
 		resize: resize,
-        controls: mouseControls,
+        controls: function () {
+            return mouseControls;
+        },
         orientationPossible: function () {
             return orientationPossible;
         },
@@ -645,8 +651,10 @@
 			if (!vrMode) {
 				vrControls.freeze = false;
 			}
-			mouseControls.enabled = false;
-            mouseControls.autoRotate = false;
+            try {
+                mouseControls.enabled = false;
+                mouseControls.autoRotate = false;
+            } catch (e) {}
 		},
 		disableOrientation: function () {
             // clearTimeout(autoRotateTimer);
@@ -655,8 +663,10 @@
 			    camera.rotation.set(0, 0, 0);
             }
 			vrControls.freeze = !vrMode;
-			mouseControls.enabled = true;
-            mouseControls.autoRotate = true;
+            try {
+                mouseControls.enabled = true;
+                mouseControls.autoRotate = true;
+            } catch (e) {}
 		},
 
 		isFullscreen: isFullscreen,
